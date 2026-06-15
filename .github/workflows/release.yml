@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Update module.json with version and URLs
+        run: |
+          VERSION=${{ steps.version.outputs.VERSION }}
+          REPO="gmredvelvet-rgb/dnd-Velvet-sheet"
+          jq \
+            --arg version "$VERSION" \
+            --arg manifest "https://github.com/$REPO/releases/latest/download/module.json" \
+            --arg download "https://github.com/$REPO/releases/download/v$VERSION/dnd-velvet-sheets.zip" \
+            '.version = $version | .manifest = $manifest | .download = $download' \
+            module.json > module.tmp.json && mv module.tmp.json module.json
+
+      - name: Create zip
+        run: |
+          zip -r dnd-velvet-sheets.zip \
+            module.json \
+            scripts/ \
+            styles/ \
+            templates/ \
+            lang/ \
+            lib/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: v${{ steps.version.outputs.VERSION }}
+          files: |
+            dnd-velvet-sheets.zip
+            module.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
