@@ -5,7 +5,7 @@
 
 import VA from "./aaa-animations.mjs";
 
-const MODULE_ID = "dnd-sheet-aaa";
+const MODULE_ID = "dnd-velvet-sheets";
 
 /* ============================================== */
 /*  Sound System — Helpers                        */
@@ -288,7 +288,7 @@ class AAACharacterSheet extends ActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["dnd5e", "sheet", "actor", "aaa-sheet"],
-      template: "modules/dnd-sheet-aaa/templates/aaa-character-sheet.hbs",
+      template: "modules/dnd-velvet-sheets/templates/aaa-character-sheet.hbs",
       width: 900,
       height: 720,
       resizable: true,
@@ -422,8 +422,8 @@ class AAACharacterSheet extends ActorSheet {
     };
 
     // Custom background image flag
-    context.bgImage = actor.getFlag("dnd-sheet-aaa", "bgImage") ?? "";
-    context.bgOpacity = actor.getFlag("dnd-sheet-aaa", "bgOpacity") ?? 80;
+    context.bgImage = actor.getFlag("dnd-velvet-sheets", "bgImage") ?? "";
+    context.bgOpacity = actor.getFlag("dnd-velvet-sheets", "bgOpacity") ?? 80;
 
     // Spell slots
     context.spellSlots = this._prepareSpellSlots(systemData);
@@ -861,7 +861,7 @@ class AAACharacterSheet extends ActorSheet {
       ranged:     { label: "Ranged",     img: "icons/weapons/bows/shortbow-recurve-bone.webp",           filter: ["weapon"] },
       ammo:       { label: "Ammo",       img: "icons/weapons/ammunition/arrow-broadhead-pointed-orange.webp", filter: ["consumable", "loot"] },
     };
-    const equipped = actor.getFlag("dnd-sheet-aaa", "paperDollSlots") ?? {};
+    const equipped = actor.getFlag("dnd-velvet-sheets", "paperDollSlots") ?? {};
     const slots = {};
     for (const [key, def] of Object.entries(SLOT_DEFS)) {
       const itemId = equipped[key];
@@ -1004,7 +1004,7 @@ class AAACharacterSheet extends ActorSheet {
     }
 
     // Apply panel opacity from flag
-    const panelOpacity = (this.actor.getFlag("dnd-sheet-aaa", "bgOpacity") ?? 80) / 100;
+    const panelOpacity = (this.actor.getFlag("dnd-velvet-sheets", "bgOpacity") ?? 80) / 100;
     const sheet = html.find(".dnd-sheet")[0];
     if (sheet) {
       sheet.style.setProperty("--aaa-panel-opacity", panelOpacity);
@@ -1015,8 +1015,8 @@ class AAACharacterSheet extends ActorSheet {
 
     // Background settings dialog
     html.find(".bg-picker").click(ev => {
-      const currentBg = this.actor.getFlag("dnd-sheet-aaa", "bgImage") ?? "";
-      const currentOp = this.actor.getFlag("dnd-sheet-aaa", "bgOpacity") ?? 80;
+      const currentBg = this.actor.getFlag("dnd-velvet-sheets", "bgImage") ?? "";
+      const currentOp = this.actor.getFlag("dnd-velvet-sheets", "bgOpacity") ?? 80;
       const dlgContent = `
         <form class="aaa-bg-settings">
           <div style="margin-bottom:10px;">
@@ -1044,15 +1044,15 @@ class AAACharacterSheet extends ActorSheet {
               const form = html.find("form")[0];
               const path = form.bgPath.value.trim();
               const opacity = parseInt(form.bgOpacity.value);
-              this.actor.setFlag("dnd-sheet-aaa", "bgImage", path);
-              this.actor.setFlag("dnd-sheet-aaa", "bgOpacity", opacity);
+              this.actor.setFlag("dnd-velvet-sheets", "bgImage", path);
+              this.actor.setFlag("dnd-velvet-sheets", "bgOpacity", opacity);
             }
           },
           clear: {
             icon: '<i class="fas fa-trash"></i>',
             label: "Clear BG",
             callback: () => {
-              this.actor.setFlag("dnd-sheet-aaa", "bgImage", "");
+              this.actor.setFlag("dnd-velvet-sheets", "bgImage", "");
             }
           }
         },
@@ -1427,11 +1427,11 @@ class AAACharacterSheet extends ActorSheet {
       const slotKey = ev.currentTarget.dataset.slot;
       const itemId = ev.currentTarget.dataset.itemId;
       if (itemId) {
-        const slots = foundry.utils.deepClone(this.actor.getFlag("dnd-sheet-aaa", "paperDollSlots") ?? {});
+        const slots = foundry.utils.deepClone(this.actor.getFlag("dnd-velvet-sheets", "paperDollSlots") ?? {});
         delete slots[slotKey];
         // Unset via -=key then overwrite to ensure Foundry actually removes the key
-        await this.actor.unsetFlag("dnd-sheet-aaa", "paperDollSlots");
-        await this.actor.setFlag("dnd-sheet-aaa", "paperDollSlots", slots);
+        await this.actor.unsetFlag("dnd-velvet-sheets", "paperDollSlots");
+        await this.actor.setFlag("dnd-velvet-sheets", "paperDollSlots", slots);
         const item = this.actor.items.get(itemId);
         if (item?.system?.equipped !== undefined) await item.update({ "system.equipped": false });
       }
@@ -1451,9 +1451,9 @@ class AAACharacterSheet extends ActorSheet {
           const item = this.actor.items.get(data.uuid?.split(".").pop()) || await Item.implementation.fromDropData(data);
           if (!item || item.parent !== this.actor) return;
           const slotKey = el.dataset.slot;
-          const slots = this.actor.getFlag("dnd-sheet-aaa", "paperDollSlots") ?? {};
+          const slots = this.actor.getFlag("dnd-velvet-sheets", "paperDollSlots") ?? {};
           slots[slotKey] = item.id;
-          await this.actor.setFlag("dnd-sheet-aaa", "paperDollSlots", slots);
+          await this.actor.setFlag("dnd-velvet-sheets", "paperDollSlots", slots);
           if (item.system?.equipped !== undefined) await item.update({ "system.equipped": true });
         } catch(e) { /* ignore bad data */ }
       });
@@ -1463,9 +1463,9 @@ class AAACharacterSheet extends ActorSheet {
     html.find(".pd-unequip-all").click(async ev => {
       ev.stopPropagation();
       if (!this.isEditable) return;
-      const slots = this.actor.getFlag("dnd-sheet-aaa", "paperDollSlots") ?? {};
+      const slots = this.actor.getFlag("dnd-velvet-sheets", "paperDollSlots") ?? {};
       const ids = Object.values(slots).filter(Boolean);
-      await this.actor.unsetFlag("dnd-sheet-aaa", "paperDollSlots");
+      await this.actor.unsetFlag("dnd-velvet-sheets", "paperDollSlots");
       for (const id of ids) {
         const item = this.actor.items.get(id);
         if (item?.system?.equipped !== undefined) await item.update({ "system.equipped": false });
@@ -1501,9 +1501,9 @@ class AAACharacterSheet extends ActorSheet {
       render: dlgHtml => {
         dlgHtml.find(".pd-pick-item").click(async ev => {
           const id = ev.currentTarget.dataset.id;
-          const slots = this.actor.getFlag("dnd-sheet-aaa", "paperDollSlots") ?? {};
+          const slots = this.actor.getFlag("dnd-velvet-sheets", "paperDollSlots") ?? {};
           slots[slotKey] = id;
-          await this.actor.setFlag("dnd-sheet-aaa", "paperDollSlots", slots);
+          await this.actor.setFlag("dnd-velvet-sheets", "paperDollSlots", slots);
           const item = this.actor.items.get(id);
           if (item?.system?.equipped !== undefined) await item.update({ "system.equipped": true });
           dlg.close();

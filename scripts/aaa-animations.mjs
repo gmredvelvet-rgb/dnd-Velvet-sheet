@@ -1,5 +1,5 @@
 ﻿/**
- * AAA Animations — animation system for dnd-sheet-aaa
+ * AAA Animations — animation system for dnd-velvet-sheets
  * Powered by GSAP 3 (global `gsap`) and Anime.js 3 (global `anime`)
  */
 
