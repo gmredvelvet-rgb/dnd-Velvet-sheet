@@ -1,0 +1,23 @@
+{
+  "AAA.SheetName": "Hoja de Personaje AAA RPG",
+  "AAA.Attributes": "Atributos",
+  "AAA.Skills": "Habilidades",
+  "AAA.Inventory": "Inventario",
+  "AAA.Spells": "Hechizos",
+  "AAA.Features": "Rasgos",
+  "AAA.Biography": "Biografía",
+  "AAA.Effects": "Efectos Activos",
+  "AAA.ShortRest": "Descanso Corto",
+  "AAA.LongRest": "Descanso Largo",
+  "AAA.RollInitiative": "Tirar Iniciativa",
+  "AAA.Sound.ConfigTitle": "Configuración de Sonido del Item",
+  "AAA.Sound.Playlist": "Lista de Reproducción",
+  "AAA.Sound.Track": "Pista",
+  "AAA.Sound.Volume": "Volumen",
+  "AAA.Sound.None": "— Ninguno —",
+  "AAA.Sound.Random": "Pista Aleatoria",
+  "AAA.Sound.Preview": "Preescucha",
+  "AAA.Sound.Clear": "Limpiar",
+  "AAA.Sound.Save": "Guardar",
+  "AAA.Sound.Configure": "Configurar Sonido"
+}

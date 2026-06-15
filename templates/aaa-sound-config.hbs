@@ -1,0 +1,62 @@
+<form class="aaa-sound-config-form" autocomplete="off">
+  <div class="form-group">
+    <label>Playlist</label>
+    <select name="playlist">
+      <option value="">— None —</option>
+      {{#each playlists}}
+      <option value="{{this.id}}" {{#if (eq this.id ../currentPlaylist)}}selected{{/if}}>
+        {{this.name}}
+      </option>
+      {{/each}}
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Track</label>
+    <select name="track">
+      <option value="">— None —</option>
+      <option value="random-track" {{#if (eq currentTrack "random-track")}}selected{{/if}}>
+        🎲 Random Track
+      </option>
+      {{#each tracks}}
+      <option value="{{this.id}}" {{#if (eq this.id ../currentTrack)}}selected{{/if}}>
+        {{this.name}}
+      </option>
+      {{/each}}
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Volume: <span class="aaa-vol-val">{{volumePct}}%</span></label>
+    <input type="range" name="volume" min="0" max="1" step="0.05" value="{{volume}}">
+  </div>
+
+  <div class="form-group aaa-sound-buttons">
+    <button type="button" class="aaa-sound-preview">
+      <i class="fas fa-play"></i> Preview
+    </button>
+    <button type="button" class="aaa-sound-clear">
+      <i class="fas fa-times"></i> Clear
+    </button>
+    <button type="submit">
+      <i class="fas fa-save"></i> Save
+    </button>
+  </div>
+
+  <hr class="aaa-divider"/>
+
+  <div class="form-group aaa-image-group">
+    <label><i class="fas fa-image"></i> Action Image <span class="aaa-label-sub">(Visual Novel Combat)</span></label>
+    <div class="aaa-img-row">
+      <img class="aaa-action-img-preview" src="{{actionImage}}"{{#unless actionImage}} style="display:none;"{{/unless}} alt=""/>
+      <input type="hidden" name="actionImage" value="{{actionImage}}"/>
+      <button type="button" class="aaa-action-img-pick" title="Pick image">
+        <i class="fas fa-folder-open"></i>
+      </button>
+      <button type="button" class="aaa-action-img-clear" title="Clear image">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <p class="hint">Shown in the VN window when this action is used in Combat Stage mode.</p>
+  </div>
+</form>

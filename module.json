@@ -1,0 +1,58 @@
+{
+  "id": "dnd-sheet-aaa",
+  "title": "AAA D&D Character Sheet",
+  "description": "Custom RPG-style character sheet for D&D 5e with animated UI, parallax effects, and game-like aesthetics.",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "12",
+    "verified": "13",
+    "maximum": "14"
+  },
+  "authors": [
+    {
+      "name": "AAA Studio"
+    }
+  ],
+  "relationships": {
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "3.0.0",
+          "verified": "5.3.1"
+        }
+      }
+    ]
+  },
+  "flags": {
+    "dnd5e": {
+      "module-css": [
+        "styles/aaa-sheet.css"
+      ]
+    }
+  },
+  "scripts": [
+    "lib/gsap.min.js",
+    "lib/anime.min.js"
+  ],
+  "esmodules": [
+    "scripts/aaa-sheet.mjs",
+    "scripts/aaa-animations.mjs"
+  ],
+  "styles": [
+    "styles/aaa-sheet.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "es",
+      "name": "Español",
+      "path": "lang/es.json"
+    }
+  ]
+}

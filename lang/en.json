@@ -1,0 +1,23 @@
+{
+  "AAA.SheetName": "AAA RPG Character Sheet",
+  "AAA.Attributes": "Attributes",
+  "AAA.Skills": "Skills",
+  "AAA.Inventory": "Inventory",
+  "AAA.Spells": "Spells",
+  "AAA.Features": "Features",
+  "AAA.Biography": "Biography",
+  "AAA.Effects": "Active Effects",
+  "AAA.ShortRest": "Short Rest",
+  "AAA.LongRest": "Long Rest",
+  "AAA.RollInitiative": "Roll Initiative",
+  "AAA.Sound.ConfigTitle": "Item Sound Configuration",
+  "AAA.Sound.Playlist": "Playlist",
+  "AAA.Sound.Track": "Track",
+  "AAA.Sound.Volume": "Volume",
+  "AAA.Sound.None": "— None —",
+  "AAA.Sound.Random": "Random Track",
+  "AAA.Sound.Preview": "Preview",
+  "AAA.Sound.Clear": "Clear",
+  "AAA.Sound.Save": "Save",
+  "AAA.Sound.Configure": "Configure Sound"
+}
