@@ -24,9 +24,9 @@
   --aaa-bg-card: rgba(255, 255, 255, 0.02);
   --aaa-border: rgba(200, 168, 78, 0.12);
   --aaa-border-strong: rgba(200, 168, 78, 0.3);
-  --aaa-text: #c0b090;
+  --aaa-text: #c8b07a;
   --aaa-text-bright: #e0d4b8;
-  --aaa-text-dim: #6b6252;
+  --aaa-text-dim: #c4a040;
   --aaa-success: #5a8a3a;
   --aaa-danger: #a82020;
   --aaa-font-title: 'Cinzel', serif;
@@ -187,6 +187,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  text-shadow: 0 0 8px rgba(200, 168, 78, 0.2), 0 1px 2px rgba(0,0,0,0.6);
 }
 
 .nav-item i {
@@ -392,6 +393,7 @@
   color: var(--aaa-text-dim);
   display: block;
   margin-top: 2px;
+  text-shadow: 0 0 6px rgba(200, 168, 78, 0.25), 0 1px 2px rgba(0,0,0,0.5);
 }
 
 /* ═══════════════════════════════════════ */
@@ -441,6 +443,7 @@
   color: var(--aaa-text-dim);
   display: block;
   margin-bottom: 1px;
+  text-shadow: 0 0 6px rgba(200, 168, 78, 0.25), 0 1px 2px rgba(0,0,0,0.5);
 }
 
 .stat .ability-input {
@@ -509,6 +512,7 @@
   border-bottom: 1px solid var(--aaa-border);
   letter-spacing: 2px;
   text-transform: uppercase;
+  text-shadow: 0 0 14px rgba(200, 168, 78, 0.35), 0 1px 2px rgba(0,0,0,0.6);
 }
 
 .aaa-panel h3 {
@@ -520,6 +524,7 @@
   border: none;
   text-transform: uppercase;
   letter-spacing: 1.5px;
+  text-shadow: 0 0 8px rgba(200, 168, 78, 0.3);
 }
 
 /* ═══════════════════════════════════════ */
@@ -579,6 +584,7 @@
   letter-spacing: 1.2px;
   color: var(--aaa-text-dim);
   margin-top: 2px;
+  text-shadow: 0 0 6px rgba(200, 168, 78, 0.25), 0 1px 2px rgba(0,0,0,0.5);
 }
 
 /* ═══════════════════════════════════════ */
@@ -2868,9 +2874,9 @@
   --aaa-border:            rgba(180, 110, 15, 0.12);
   --aaa-border-strong:     rgba(200, 140, 25, 0.36);
   --aaa-border-glow:       rgba(200, 140, 25, 0.55);
-  --aaa-text:              #b09870;
+  --aaa-text:              #c8b07a;
   --aaa-text-bright:       #e0cca0;
-  --aaa-text-dim:          #5a4830;
+  --aaa-text-dim:          #c4a040;
   --aaa-text-accent:       #e8b020;
   --aaa-shadow-glow:       0 0 12px rgba(191, 122, 16, 0.22);
   --aaa-shadow-glow-strong:0 0 20px rgba(191, 122, 16, 0.38);
@@ -3237,7 +3243,7 @@
   color: var(--aaa-text-dim) !important;
   margin-bottom: 16px !important;
   padding-bottom: 10px !important;
-  text-shadow: none !important;
+  text-shadow: 0 0 12px rgba(200, 168, 78, 0.3), 0 1px 2px rgba(0,0,0,0.8) !important;
 }
 .aaa-panel h2::after {
   background: linear-gradient(90deg,
@@ -3253,7 +3259,7 @@
   letter-spacing: 3px !important;
   color: var(--aaa-text-dim) !important;
   margin-top: 18px !important;
-  opacity: 0.75;
+  text-shadow: 0 0 8px rgba(200, 168, 78, 0.25), 0 1px 2px rgba(0,0,0,0.7) !important;
 }
 
 /* ── 13. HP BAR — Estus Flask parallelogram ──────────────────────── */
