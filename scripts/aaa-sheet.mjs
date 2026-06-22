@@ -4,6 +4,7 @@
  */
 
 import VA from "./aaa-animations.mjs";
+import { AAALicenseClient, AAALicenseUI } from "./license-client.mjs";
 
 const MODULE_ID = "dnd-velvet-sheets";
 
@@ -911,9 +912,64 @@ class AAACharacterSheet extends ActorSheet {
     return super.close(options);
   }
 
+  _injectLicenseOverlay(html) {
+    const root = html instanceof jQuery ? html[0] : html;
+    if (!root) return;
+    root.style.position = 'relative';
+    const overlay = document.createElement('div');
+    overlay.className = 'aaa-license-overlay';
+    overlay.style.cssText = `
+      position:absolute;inset:0;z-index:9999;
+      background:rgba(10,8,20,0.93);
+      display:flex;align-items:center;justify-content:center;
+      border-radius:inherit;
+    `;
+    overlay.innerHTML = `
+      <div style="text-align:center;padding:32px;max-width:360px">
+        <div style="font-size:3rem;margin-bottom:12px">🔐</div>
+        <h2 style="color:#c89b3c;margin:0 0 8px;font-family:system-ui">AAA D&D Sheet</h2>
+        <p style="color:#a09080;font-size:.9rem;line-height:1.5;margin-bottom:24px">
+          A Patreon subscription is required to use this character sheet.<br>
+          Connect your account to unlock it.
+        </p>
+        <button class="aaa-lic-connect" style="
+          background:#c89b3c;color:#1a1a2e;border:none;border-radius:8px;
+          padding:12px 24px;font-size:.95rem;font-weight:700;cursor:pointer;
+          display:block;width:100%;margin-bottom:10px
+        ">Connect Patreon</button>
+        <button class="aaa-lic-code" style="
+          background:transparent;color:#a09080;border:1px solid #555;border-radius:8px;
+          padding:9px 16px;font-size:.82rem;cursor:pointer;display:block;width:100%
+        ">I have an auth code</button>
+      </div>
+    `;
+    overlay.querySelector('.aaa-lic-connect').addEventListener('click', async () => {
+      const btn = overlay.querySelector('.aaa-lic-connect');
+      btn.textContent = 'Opening Patreon...';
+      btn.disabled = true;
+      try {
+        const success = await AAALicenseClient.instance.startOAuth();
+        if (success) this.render(true);
+        else { btn.textContent = 'Connect Patreon'; btn.disabled = false; }
+      } catch (e) {
+        btn.textContent = 'Connect Patreon'; btn.disabled = false;
+        ui.notifications?.error(`AAA D&D Sheet: ${e.message}`);
+      }
+    });
+    overlay.querySelector('.aaa-lic-code').addEventListener('click', () => {
+      AAALicenseUI.showCodeInput();
+    });
+    root.appendChild(overlay);
+  }
+
   /** @override */
   activateListeners(html) {
     super.activateListeners(html);
+
+    if (!game.settings.get(MODULE_ID, "worldLicensed")) {
+      this._injectLicenseOverlay(html);
+      return;
+    }
 
     // Manual tab navigation
     html.find(".nav-item").click(ev => {
@@ -1579,6 +1635,11 @@ class AAACharacterSheet extends ActorSheet {
 Hooks.once("init", () => {
   console.log("AAA Sheet | Initializing AAA D&D Character Sheet");
 
+  // World-level license flag — set by GM after Patreon auth, read by all clients
+  game.settings.register(MODULE_ID, "worldLicensed", {
+    scope: "world", type: Boolean, config: false, default: false
+  });
+
   Actors.registerSheet("dnd5e", AAACharacterSheet, {
     types: ["character"],
     makeDefault: true,
@@ -1588,6 +1649,18 @@ Hooks.once("init", () => {
 
 Hooks.once("ready", () => {
   console.log("AAA Sheet | Ready");
+
+  // Initialize license — if already authenticated, tokens are validated from localStorage
+  AAALicenseClient.instance.initialize().then(tokenValid => {
+    const worldLicensed = game.settings.get(MODULE_ID, "worldLicensed");
+    if (!tokenValid && !worldLicensed) {
+      AAALicenseUI.show();
+    } else if (tokenValid && !worldLicensed && game.user?.isGM) {
+      game.settings.set(MODULE_ID, "worldLicensed", true).catch(() => {});
+    }
+  }).catch(() => {
+    if (!game.settings.get(MODULE_ID, "worldLicensed")) AAALicenseUI.show();
+  });
 
   // Apply dark UI class to body for chat/journal/dialog styling
   document.body.classList.add("aaa-dark-ui");

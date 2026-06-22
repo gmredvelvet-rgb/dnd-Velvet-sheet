@@ -39,6 +39,7 @@
     "lib/anime.min.js"
   ],
   "esmodules": [
+    "scripts/license-client.mjs",
     "scripts/aaa-sheet.mjs",
     "scripts/aaa-animations.mjs"
   ],
