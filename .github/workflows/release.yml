@@ -39,7 +39,8 @@ jobs:
             styles/ \
             templates/ \
             lang/ \
-            lib/
+            lib/ \
+            fonts/
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

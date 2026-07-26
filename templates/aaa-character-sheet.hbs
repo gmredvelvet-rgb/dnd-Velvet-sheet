@@ -6,10 +6,12 @@
     <!-- LEFT SIDEBAR -->
     <div class="aaa-sidebar">
       <div class="char-quick-info">
+        <div class="char-level-diamond" title="Level {{level}}">
+          <span class="char-level-value">{{level}}</span>
+        </div>
         <div class="char-name">{{actor.name}}</div>
         <div class="char-class">{{classLabels}}</div>
         <div class="char-race">{{race}}</div>
-        <div class="char-level">Level {{level}}</div>
       </div>
 
       <nav class="nav-list">
@@ -33,6 +35,7 @@
         </div>
         <div class="nav-item" data-tab="effects">
           <i class="fas fa-bolt"></i><span>Effects</span>
+          {{#if effectsCount}}<span class="nav-badge" title="Active effects">{{effectsCount}}</span>{{/if}}
         </div>
       </nav>
 
@@ -49,6 +52,13 @@
       <div class="portrait-wrap">
         <img class="portrait" src="{{actor.img}}" title="Click to change portrait">
         <div class="portrait-vignette"></div>
+
+        <!-- Cinematic hero identity plate -->
+        <div class="hero-plate">
+          <div class="hero-plate-ornament">✦ ─── ✦ ─── ✦</div>
+          <div class="hero-plate-name">{{actor.name}}</div>
+          <div class="hero-plate-sub">{{race}} {{classLabels}} <span class="hero-plate-level">· Level {{level}}</span></div>
+        </div>
         {{#if inspiration}}
         <div class="inspiration-badge inspiration-toggle active" title="Inspired!">
           <i class="fas fa-sun"></i>
@@ -58,11 +68,6 @@
           <i class="far fa-sun"></i>
         </div>
         {{/if}}
-
-        <!-- Paper Doll Toggle Button -->
-        <div class="paperdoll-toggle" title="Toggle Paper Doll">
-          <i class="fas fa-tshirt"></i>
-        </div>
 
         <!-- Paper Doll Overlay -->
         <div class="paperdoll-overlay">
@@ -79,7 +84,11 @@
               {{/each}}
             </div>
             <div class="pd-col pd-center-spacer">
+              <!-- Action cluster: always visible/interactive even while
+                   the doll is closed, so the toggle can never get covered
+                   by the equipment slots (see PAPER DOLL FIX in the CSS). -->
               <div class="pd-actions">
+                <button class="pd-btn paperdoll-toggle" title="Toggle Paper Doll"><i class="fas fa-tshirt"></i></button>
                 <button class="pd-btn pd-unequip-all" title="Unequip All"><i class="fas fa-times-circle"></i></button>
               </div>
             </div>
@@ -380,6 +389,11 @@
       <div class="tab" data-tab="inventory">
         <h2>Inventory</h2>
 
+        <div class="velvet-search">
+          <i class="fas fa-search"></i>
+          <input type="search" class="velvet-search-input" data-scope="inventory" placeholder="Search items..." aria-label="Search inventory">
+        </div>
+
         <!-- Category Filter -->
         <div class="inv-filter-bar">
           <button class="inv-filter active" data-filter="all"><i class="fas fa-th"></i> All</button>
@@ -421,16 +435,24 @@
         </div>
 
         {{#each inventory}}
-        <div class="inventory-category" data-category="{{@key}}">
+        <div class="inventory-category {{#unless this.items.length}}is-empty{{/unless}}" data-category="{{@key}}">
           <h3 class="category-header">{{this.label}} <span class="item-create" data-type="{{this.type}}" title="Add {{this.label}}"><i class="fas fa-plus"></i></span></h3>
+          {{#unless this.items.length}}
+          <div class="velvet-empty-state">
+            <i class="fas fa-box-open"></i>
+            <span>No {{this.label}} yet — use <i class="fas fa-plus"></i> to add one</span>
+          </div>
+          {{/unless}}
           <div class="inv-grid">
             {{#each this.items}}
-            <div class="inv-slot" data-item-id="{{this.id}}" draggable="true" title="{{this.name}}">
+            <div class="inv-slot" data-item-id="{{this.id}}" data-rarity="{{this.rarity}}" draggable="true" title="{{this.name}}">
               <img class="inv-slot-img" src="{{this.img}}">
               {{#if this.quantity}}<span class="inv-slot-qty">{{this.quantity}}</span>{{/if}}
               {{#if this.equipped}}<span class="inv-slot-equipped"><i class="fas fa-shield-alt"></i></span>{{/if}}
+              {{#if this.inContainer}}<span class="inv-slot-contained" title="Stored in a container"><i class="fas fa-box"></i></span>{{/if}}
               <div class="inv-slot-hover">
                 <span class="inv-slot-name">{{this.name}}</span>
+                {{#if this.meta}}<span class="inv-slot-meta">{{this.meta}}</span>{{/if}}
                 <div class="inv-slot-actions">
                   <span class="item-roll" title="Use"><i class="fas fa-dice-d20"></i></span>
                   <span class="item-equip {{#if this.equipped}}equipped{{/if}}" title="Equip"><i class="fas fa-shield-alt"></i></span>
@@ -449,6 +471,12 @@
       <!-- SPELLS TAB -->
       <div class="tab" data-tab="spells">
         <h2>Spells <span class="item-create" data-type="spell" title="Add Spell"><i class="fas fa-plus"></i></span></h2>
+
+        <div class="velvet-search">
+          <i class="fas fa-search"></i>
+          <input type="search" class="velvet-search-input" data-scope="spells" placeholder="Search spells..." aria-label="Search spells">
+        </div>
+
         <div class="spell-info-bar">
           <div class="spell-stat">
             <span class="spell-stat-label">Ability</span>
@@ -534,6 +562,11 @@
       <!-- FEATURES TAB -->
       <div class="tab" data-tab="features">
         <h2>Features <span class="item-create" data-type="feat" title="Add Feat"><i class="fas fa-plus"></i></span></h2>
+
+        <div class="velvet-search">
+          <i class="fas fa-search"></i>
+          <input type="search" class="velvet-search-input" data-scope="features" placeholder="Search features..." aria-label="Search features">
+        </div>
 
         <!-- Feature Filter -->
         <div class="feat-filter-bar">
@@ -639,7 +672,11 @@
           {{/each}}
         </div>
         {{else}}
-        <p class="empty-notice">No active effects.</p>
+        <div class="velvet-empty-state velvet-empty-state--tall">
+          <i class="fas fa-shield-alt"></i>
+          <span>Unburdened</span>
+          <small>No active effects. Effects applied in play will appear here.</small>
+        </div>
         {{/if}}
       </div>
 

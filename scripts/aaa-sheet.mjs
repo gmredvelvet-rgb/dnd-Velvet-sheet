@@ -454,6 +454,7 @@ class AAACharacterSheet extends ActorSheet {
 
     // Conditions / Effects
     context.effects = this._prepareEffects(actor);
+    context.effectsCount = context.effects.filter(e => !e.disabled).length;
 
     // Class items for display/editing
     context.classItems = [];
@@ -593,18 +594,31 @@ class AAACharacterSheet extends ActorSheet {
     };
 
     for (const item of actor.items) {
+      const identified = item.system.identified !== false;
+      // Match 5e mystification: players see a concealed name, GMs see everything
+      const conceal = !identified && !game.user.isGM;
+      const weight = item.system.weight?.value ?? item.system.weight ?? 0;
+      const priceVal = item.system.price?.value ?? 0;
+      const priceDenom = item.system.price?.denomination ?? "gp";
+      const metaParts = [
+        priceVal ? `${priceVal} ${priceDenom}` : null,
+        weight ? `${weight} lb` : null
+      ].filter(Boolean);
       const ctx = {
         id: item.id,
-        name: item.name,
+        name: conceal ? (item.system.unidentified?.name || "Unidentified Item") : item.name,
         img: item.img,
         type: item.type,
         quantity: item.system.quantity ?? 1,
-        weight: item.system.weight?.value ?? item.system.weight ?? 0,
+        weight,
         equipped: item.system.equipped,
-        identified: item.system.identified !== false,
+        identified,
         attunement: item.system.attunement,
         attuned: item.system.attuned,
-        rarity: item.system.rarity,
+        rarity: conceal ? "" : (item.system.rarity ?? ""),
+        // Tooltip meta shown in the hover card: "150 gp · 3 lb"
+        meta: conceal ? "" : metaParts.join(" · "),
+        inContainer: !!item.system.container,
         uses: item.system.uses ?? null,
         price: item.system.price?.value ?? 0,
         hasSound: !!item.getFlag(MODULE_ID, "soundTrack")
@@ -998,11 +1012,64 @@ class AAACharacterSheet extends ActorSheet {
       html.find(`.aaa-panel > .tab[data-tab="${this._activeTab}"]`).addClass("active");
     }
 
+    // ── Keyboard accessibility ──
+    // Interactive rows/pips are divs and spans; make them tabbable and let
+    // Enter/Space activate them like a click.
+    html.find([
+      ".nav-item", ".stat", ".save-row", ".skill-row", ".inv-slot",
+      ".slot-pip", ".pd-slot", ".inspiration-toggle", ".death-save-roll",
+      ".hit-die", ".class-level-up", ".class-edit", ".spell-prep-toggle",
+      ".item-roll", ".item-equip", ".item-edit", ".item-delete",
+      ".item-sound-config", ".spell-use", ".effect-toggle", ".effect-edit",
+      ".effect-delete", ".item-create", ".effect-create", ".paperdoll-toggle"
+    ].join(", ")).attr({ tabindex: 0, role: "button" });
+
+    html[0].addEventListener("keydown", ev => {
+      if (ev.key !== "Enter" && ev.key !== " ") return;
+      const target = ev.target;
+      if (target.matches("input, select, textarea, button, a, [contenteditable='true']")) return;
+      if (target.getAttribute("role") === "button") {
+        ev.preventDefault();
+        target.click();
+      }
+    });
+
+    // ── Quick search (Inventory / Spells / Features) ──
+    this._searchQueries ??= {};
+    const applySearch = (scope, rawQuery) => {
+      const q = (rawQuery ?? "").trim().toLowerCase();
+      this._searchQueries[scope] = q;
+      const tab = html.find(`.aaa-panel > .tab[data-tab="${scope}"]`);
+      const rowSelector = {
+        inventory: ".inv-slot",
+        spells: ".spell-entry",
+        features: ".feature-entry"
+      }[scope];
+      if (!tab.length || !rowSelector) return;
+      tab.find(rowSelector).each((_, el) => {
+        const name = (
+          el.querySelector(".inv-slot-name, .spell-name, .feature-name")?.textContent
+          ?? el.getAttribute("title") ?? ""
+        ).toLowerCase();
+        el.style.display = !q || name.includes(q) ? "" : "none";
+      });
+      tab.toggleClass("velvet-searching", !!q);
+    };
+    html.find(".velvet-search-input").on("input", ev => {
+      applySearch(ev.currentTarget.dataset.scope, ev.currentTarget.value);
+    });
+    for (const [scope, q] of Object.entries(this._searchQueries)) {
+      if (!q) continue;
+      html.find(`.velvet-search-input[data-scope="${scope}"]`).val(q);
+      applySearch(scope, q);
+    }
+
     // Inventory category filter
     html.find(".inv-filter").click(ev => {
       const filter = ev.currentTarget.dataset.filter;
       html.find(".inv-filter").removeClass("active");
       $(ev.currentTarget).addClass("active");
+      html.find(`.tab[data-tab="inventory"]`).toggleClass("inv-filtered", filter !== "all");
       if (filter === "all") {
         html.find(".inventory-category").show();
       } else {
@@ -1016,6 +1083,7 @@ class AAACharacterSheet extends ActorSheet {
     if (this._activeInvFilter && this._activeInvFilter !== "all") {
       html.find(".inv-filter").removeClass("active");
       html.find(`.inv-filter[data-filter="${this._activeInvFilter}"]`).addClass("active");
+      html.find(`.tab[data-tab="inventory"]`).addClass("inv-filtered");
       html.find(".inventory-category").hide();
       html.find(`.inventory-category[data-category="${this._activeInvFilter}"]`).show();
     }
