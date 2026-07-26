@@ -34,6 +34,7 @@ jobs:
         run: |
           zip -r dnd-velvet-sheets.zip \
             module.json \
+            README.md \
             scripts/ \
             styles/ \
             templates/ \
