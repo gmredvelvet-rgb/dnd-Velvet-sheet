@@ -980,10 +980,9 @@ class AAACharacterSheet extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
-    if (!game.settings.get(MODULE_ID, "worldLicensed")) {
-      this._injectLicenseOverlay(html);
-      return;
-    }
+    // SOFT GATE: the sheet is never locked. Licensing only drives a periodic
+    // reminder (see the ready hook + AAALicenseUI.startReminder). No overlay,
+    // no early return — the full sheet always renders.
 
     // Manual tab navigation
     html.find(".nav-item").click(ev => {
@@ -1718,16 +1717,23 @@ Hooks.once("init", () => {
 Hooks.once("ready", () => {
   console.log("AAA Sheet | Ready");
 
-  // Initialize license — if already authenticated, tokens are validated from localStorage
+  // Initialize license (SOFT GATE — never blocks the sheet). If the token is
+  // valid, mark the world licensed and stay quiet; otherwise start the periodic
+  // reminder (one nudge ~8s after load, then every 10 min, all auto-hiding).
   AAALicenseClient.instance.initialize().then(tokenValid => {
-    const worldLicensed = game.settings.get(MODULE_ID, "worldLicensed");
-    if (!tokenValid && !worldLicensed) {
-      AAALicenseUI.show();
-    } else if (tokenValid && !worldLicensed && game.user?.isGM) {
+    if (tokenValid && game.user?.isGM) {
       game.settings.set(MODULE_ID, "worldLicensed", true).catch(() => {});
     }
+    if (game.user?.isGM && !game.settings.get(MODULE_ID, "worldLicensed")) {
+      setTimeout(() => {
+        if (!game.settings.get(MODULE_ID, "worldLicensed")) AAALicenseUI.show({ autoHide: true });
+      }, 8000);
+      AAALicenseUI.startReminder();
+    }
   }).catch(() => {
-    if (!game.settings.get(MODULE_ID, "worldLicensed")) AAALicenseUI.show();
+    if (game.user?.isGM && !game.settings.get(MODULE_ID, "worldLicensed")) {
+      AAALicenseUI.startReminder();
+    }
   });
 
   // Apply dark UI class to body for chat/journal/dialog styling
