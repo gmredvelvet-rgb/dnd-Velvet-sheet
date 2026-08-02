@@ -2,7 +2,7 @@
   "id": "dnd-velvet-sheets",
   "title": "AAA D&D Character Sheet",
   "description": "Custom RPG-style character sheet for D&D 5e with animated UI, parallax effects, and game-like aesthetics.",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "manifest": "https://github.com/gmredvelvet-rgb/dnd-Velvet-sheet/releases/latest/download/module.json",
   "download": "https://github.com/gmredvelvet-rgb/dnd-Velvet-sheet/releases/latest/download/dnd-velvet-sheets.zip",
   "compatibility": {
