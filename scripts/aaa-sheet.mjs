@@ -5,6 +5,7 @@
 
 import VA from "./aaa-animations.mjs";
 import { AAALicenseClient, AAALicenseUI } from "./license-client.mjs";
+import { licenseHub } from "./license-hub.mjs";
 
 const MODULE_ID = "dnd-velvet-sheets";
 
@@ -1720,7 +1721,11 @@ Hooks.once("ready", () => {
   // Initialize license (SOFT GATE — never blocks the sheet). If the token is
   // valid, mark the world licensed and stay quiet; otherwise start the periodic
   // reminder (one nudge ~8s after load, then every 10 min, all auto-hiding).
-  AAALicenseClient.instance.initialize().then(tokenValid => {
+  // With Velvet License Hub active the licence is the hub's: register and stay
+  // silent — no server call, no card, no reminder of this sheet's own.
+  const licenceHub = licenseHub();
+  if (licenceHub) licenceHub.register(MODULE_ID);
+  else AAALicenseClient.instance.initialize().then(tokenValid => {
     if (tokenValid && game.user?.isGM) {
       game.settings.set(MODULE_ID, "worldLicensed", true).catch(() => {});
     }
