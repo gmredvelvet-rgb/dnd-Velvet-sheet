@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 760" fill="none">
+  <defs><linearGradient id="metal" x1="180" y1="20" x2="180" y2="720" gradientUnits="userSpaceOnUse"><stop stop-color="#d4b77d" stop-opacity=".8"/><stop offset=".4" stop-color="#b69d70" stop-opacity=".35"/><stop offset=".74" stop-color="#6d948f" stop-opacity=".3"/><stop offset="1" stop-color="#d4b77d" stop-opacity=".65"/></linearGradient><radialGradient id="light"><stop stop-color="#649b9a" stop-opacity=".2"/><stop offset="1" stop-color="#649b9a" stop-opacity="0"/></radialGradient></defs>
+  <ellipse cx="180" cy="329" rx="154" ry="230" fill="url(#light)"/>
+  <g stroke="url(#metal)" stroke-width=".8">
+    <path d="M28 676V205C28 116 100 66 180 21c80 45 152 95 152 184v471M36 671V208C36 130 104 78 180 34c76 44 144 96 144 174v463"/>
+    <path d="M44 236C44 152 101 105 180 60c79 45 136 92 136 176M22 678h316M30 685h300"/>
+    <circle cx="180" cy="286" r="126"/><circle cx="180" cy="286" r="133"/><circle cx="180" cy="286" r="146" stroke-dasharray="1 12.9" stroke-width="4"/>
+    <path d="m180 130 26 93 106 63-106 63-26 93-26-93-106-63 106-63Z" opacity=".38"/>
+    <path d="m180 153 92 133-92 133-92-133Z" opacity=".38"/>
+    <path d="M180 112v28M180 432v28M6 286h28M326 286h28M59 165l20 20M281 387l20 20M59 407l20-20M281 185l20-20"/>
+    <ellipse cx="180" cy="599" rx="128" ry="29"/><ellipse cx="180" cy="599" rx="118" ry="23" opacity=".45"/>
+    <path d="M52 599h256M180 570v58M71 584l217 30M71 614l217-30" opacity=".4"/>
+    <path d="m180 14 7 7-7 7-7-7ZM20 224l8 10-8 10-8-10ZM340 224l8 10-8 10-8-10ZM20 641l8 10-8 10-8-10ZM340 641l8 10-8 10-8-10Z" fill="#cfb17b" fill-opacity=".2"/>
+    <path d="M28 392h12l5 8-5 8H28M332 392h-12l-5 8 5 8h12M28 421h8M324 421h8M28 458h8M324 458h8"/>
+    <path d="M147 52h20l13-13 13 13h20M153 63h14l13-9 13 9h14M143 659h23l14 12 14-12h23M152 651h16l12 10 12-10h16"/>
+  </g>
+  <g fill="#d9c18e"><circle cx="180" cy="130" r="2"/><circle cx="24" cy="286" r="2"/><circle cx="336" cy="286" r="2"/><circle cx="180" cy="442" r="2"/></g>
+</svg>

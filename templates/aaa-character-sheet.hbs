@@ -6,6 +6,8 @@
     <!-- LEFT SIDEBAR -->
     <div class="aaa-sidebar">
       <div class="char-quick-info">
+        <img class="identity-crest" src="modules/dnd-velvet-sheets/styles/velvet-crest.svg" alt="" aria-hidden="true">
+        <div class="identity-kicker">{{localize "AAA.CharacterRecord"}}</div>
         <div class="char-level-diamond" title="Level {{level}}">
           <span class="char-level-value">{{level}}</span>
         </div>
@@ -16,25 +18,25 @@
 
       <nav class="nav-list">
         <div class="nav-item active" data-tab="attributes">
-          <i class="fas fa-shield-alt"></i><span>Attributes</span>
+          <i class="fas fa-shield-alt"></i><span>{{localize "AAA.Attributes"}}</span>
         </div>
         <div class="nav-item" data-tab="skills">
-          <i class="fas fa-running"></i><span>Skills</span>
+          <i class="fas fa-running"></i><span>{{localize "AAA.Skills"}}</span>
         </div>
         <div class="nav-item" data-tab="inventory">
-          <i class="fas fa-suitcase"></i><span>Inventory</span>
+          <i class="fas fa-suitcase"></i><span>{{localize "AAA.Inventory"}}</span>
         </div>
         <div class="nav-item" data-tab="spells">
-          <i class="fas fa-hat-wizard"></i><span>Spells</span>
+          <i class="fas fa-hat-wizard"></i><span>{{localize "AAA.Spells"}}</span>
         </div>
         <div class="nav-item" data-tab="features">
-          <i class="fas fa-star"></i><span>Features</span>
+          <i class="fas fa-star"></i><span>{{localize "AAA.Features"}}</span>
         </div>
         <div class="nav-item" data-tab="biography">
-          <i class="fas fa-scroll"></i><span>Biography</span>
+          <i class="fas fa-scroll"></i><span>{{localize "AAA.Biography"}}</span>
         </div>
         <div class="nav-item" data-tab="effects">
-          <i class="fas fa-bolt"></i><span>Effects</span>
+          <i class="fas fa-bolt"></i><span>{{localize "AAA.Effects"}}</span>
           {{#if effectsCount}}<span class="nav-badge" title="Active effects">{{effectsCount}}</span>{{/if}}
         </div>
       </nav>
@@ -50,6 +52,8 @@
     <!-- CENTER: Full Body Portrait -->
     <div class="center">
       <div class="portrait-wrap">
+        <div class="hero-architecture" aria-hidden="true"></div>
+        <div class="hero-frame" aria-hidden="true"></div>
         <img class="portrait" src="{{actor.img}}" title="Click to change portrait">
         <div class="portrait-vignette"></div>
 
@@ -119,45 +123,80 @@
 
     <!-- RIGHT PANEL -->
     <div class="aaa-panel">
+      <header class="sheet-masthead">
+        <img class="sheet-emblem" src="modules/dnd-velvet-sheets/styles/velvet-crest.svg" alt="" aria-hidden="true">
+        <div class="masthead-copy"><span class="sheet-kicker">{{localize "AAA.CharacterRecord"}}</span><div class="sheet-section-title">{{localize "AAA.Attributes"}}</div></div>
+        <span class="sheet-system-badge">D&amp;D 5e</span>
+        <button type="button" class="appearance-open" data-appearance-open title="{{localize 'VelvetAppearance.Open'}}" aria-label="{{localize 'VelvetAppearance.Open'}}"><i class="fas fa-palette" aria-hidden="true"></i></button>
+      </header>
 
       <!-- ATTRIBUTES TAB -->
       <div class="tab active" data-tab="attributes">
-        <h2>Attributes</h2>
+        <h2>{{localize "AAA.Attributes"}}</h2>
+
+        {{#if isEditable}}
+        <section class="progression-card" aria-label="{{localize 'AAA.Progression.Title'}}">
+          <div class="progression-emblem" aria-hidden="true"><i class="fas fa-dragon"></i></div>
+          <div class="progression-copy"><span class="sheet-kicker">{{localize "AAA.Progression.Title"}}</span><strong>{{localize "AAA.Progression.Level"}} {{level}}</strong><small>{{#if progression.canUsePlutonium}}{{localize "AAA.Progression.OverviewHint"}}{{else}}{{localize "AAA.Progression.NativeHint"}}{{/if}}</small></div>
+          <div class="progression-actions">
+            {{#if progression.canAdvance}}<button type="button" class="character-level-up"><i class="fas fa-arrow-up" aria-hidden="true"></i> {{localize "AAA.Progression.LevelUp"}}</button>{{else}}<span class="progression-cap">{{localize "AAA.Progression.MaxLevel"}}</span>{{/if}}
+            {{#if progression.canUsePlutonium}}<button type="button" class="plutonium-import" title="{{localize 'AAA.Progression.PlutoniumHint'}}"><i class="fas fa-book-open" aria-hidden="true"></i> Plutonium</button>{{/if}}
+          </div>
+        </section>
+        {{/if}}
 
         <div class="attr-quick-row">
           <div class="attr-quick-box">
+            <i class="fas fa-shield-alt quick-stat-icon" aria-hidden="true"></i>
             <span class="attr-quick-val">{{ac}}</span>
             <span class="attr-quick-lbl">AC</span>
           </div>
           <div class="attr-quick-box initiative-roll" title="Roll Initiative">
+            <i class="fas fa-bolt quick-stat-icon" aria-hidden="true"></i>
             <span class="attr-quick-val">{{initiativeStr}}</span>
             <span class="attr-quick-lbl">Initiative</span>
           </div>
           <div class="attr-quick-box">
             <span class="attr-quick-val">{{speed.walk}}</span>
+            <i class="fas fa-wind quick-stat-icon" aria-hidden="true"></i>
             <span class="attr-quick-lbl">Speed</span>
           </div>
           <div class="attr-quick-box">
             <span class="attr-quick-val">{{profBonusStr}}</span>
+            <i class="fas fa-compass quick-stat-icon" aria-hidden="true"></i>
             <span class="attr-quick-lbl">Prof</span>
           </div>
         </div>
 
         <div class="main-stats">
           {{#each abilities}}
-          <div class="stat" data-ability="{{this.key}}" title="Click: Check / Right-Click: Save">
-            <span class="stat-label">{{this.label}}</span>
-            {{#if @root.isEditable}}
-            <input type="number" class="ability-input" data-ability="{{this.key}}" value="{{this.value}}" min="1" max="30">
-            {{else}}
-            <span class="stat-value">{{this.value}}</span>
-            {{/if}}
-            <span class="stat-mod">{{this.modStr}}</span>
+          <div class="ability-column">
+            <div class="stat" data-ability="{{this.key}}" title="Click: Check / Right-Click: Save">
+              <span class="stat-label">{{this.label}}</span>
+              {{#if @root.isEditable}}
+              <input type="number" class="ability-input" data-ability="{{this.key}}" value="{{this.value}}" min="1" max="30">
+              {{else}}
+              <span class="stat-value">{{this.value}}</span>
+              {{/if}}
+              <span class="stat-mod">{{this.modStr}}</span>
+            </div>
+            <div class="ability-save" data-ability="{{this.key}}">
+              {{#if @root.isEditable}}
+              <button type="button" class="save-prof {{#if this.proficient}}active{{/if}}" aria-pressed="{{#if this.proficient}}true{{else}}false{{/if}}" title="{{localize 'AAA.Save.Proficiency'}}: {{this.fullLabel}}" aria-label="{{localize 'AAA.Save.Proficiency'}}: {{this.fullLabel}}"><i class="fas fa-diamond" aria-hidden="true"></i></button>
+              {{else}}
+              <span class="save-prof {{#if this.proficient}}active{{/if}}" title="{{localize 'AAA.Save.Proficiency'}}: {{this.fullLabel}}"><i class="fas fa-diamond" aria-hidden="true"></i></span>
+              {{/if}}
+              <button type="button" class="save-row ability-save-roll" data-ability="{{this.key}}" title="{{localize 'AAA.Save.Roll'}}: {{this.fullLabel}} ({{this.saveStr}})" aria-label="{{localize 'AAA.Save.Roll'}}: {{this.fullLabel}} ({{this.saveStr}})" {{#unless @root.isEditable}}disabled{{/unless}}>
+                <span class="ability-save-label">{{localize "AAA.Save.Short"}}</span>
+                <span class="save-value">{{this.saveStr}}</span>
+              </button>
+            </div>
           </div>
           {{/each}}
         </div>
 
         <div class="hp-section">
+          <div class="vital-heading"><i class="fas fa-heart" aria-hidden="true"></i><span>{{localize "AAA.Vitals"}}</span></div>
           <div class="hp-bar-container">
             <div class="hp-bar">
               <div class="hp-fill" style="width: {{hp.pct}}%"></div>
@@ -229,17 +268,6 @@
           {{/each}}
         </div>
 
-        <div class="saves-section">
-          <h3>Saving Throws</h3>
-          {{#each savingThrows}}
-          <div class="save-row" data-ability="{{this.key}}" title="Click to roll {{this.fullLabel}} Save">
-            <span class="save-prof {{#if this.proficient}}active{{/if}}"><i class="fas fa-diamond"></i></span>
-            <span class="save-label">{{this.fullLabel}}</span>
-            <span class="save-value">{{this.saveStr}}</span>
-          </div>
-          {{/each}}
-        </div>
-
         {{#if senses}}
         <div class="senses-section">
           <h3>Senses</h3>
@@ -275,7 +303,7 @@
               {{#if this.subclass}}<span class="class-sub">{{this.subclass.name}}</span>{{/if}}
             </div>
             <div class="class-controls">
-              <span class="class-level-up" title="Level Up"><i class="fas fa-arrow-up"></i></span>
+              {{#if @root.progression.canAdvance}}<button type="button" class="class-level-up" title="{{localize 'AAA.Progression.NativeHint'}}" aria-label="{{localize 'AAA.Progression.LevelUp'}}: {{this.name}}"><i class="fas fa-arrow-up" aria-hidden="true"></i></button>{{/if}}
               <span class="class-edit" title="Edit"><i class="fas fa-edit"></i></span>
             </div>
           </div>
@@ -371,7 +399,7 @@
 
       <!-- SKILLS TAB -->
       <div class="tab" data-tab="skills">
-        <h2>Skills</h2>
+        <h2>{{localize "AAA.Skills"}}</h2>
         <div class="skill-list">
           {{#each skills}}
           <div class="skill-row" data-skill="{{this.key}}" title="Click to roll {{this.label}}">
@@ -387,7 +415,7 @@
 
       <!-- INVENTORY TAB -->
       <div class="tab" data-tab="inventory">
-        <h2>Inventory</h2>
+        <h2>{{localize "AAA.Inventory"}}</h2>
 
         <div class="velvet-search">
           <i class="fas fa-search"></i>
@@ -447,6 +475,7 @@
             {{#each this.items}}
             <div class="inv-slot" data-item-id="{{this.id}}" data-rarity="{{this.rarity}}" draggable="true" title="{{this.name}}">
               <img class="inv-slot-img" src="{{this.img}}">
+              <span class="inv-slot-caption">{{this.name}}</span>
               {{#if this.quantity}}<span class="inv-slot-qty">{{this.quantity}}</span>{{/if}}
               {{#if this.equipped}}<span class="inv-slot-equipped"><i class="fas fa-shield-alt"></i></span>{{/if}}
               {{#if this.inContainer}}<span class="inv-slot-contained" title="Stored in a container"><i class="fas fa-box"></i></span>{{/if}}
@@ -603,7 +632,7 @@
 
       <!-- BIOGRAPHY TAB -->
       <div class="tab" data-tab="biography">
-        <h2>Biography</h2>
+        <h2>{{localize "AAA.Biography"}}</h2>
         <div class="bio-details">
           <div class="bio-field">
             <span>Alignment:</span>

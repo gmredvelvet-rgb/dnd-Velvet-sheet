@@ -6,6 +6,10 @@
 import VA from "./aaa-animations.mjs";
 import { AAALicenseClient, AAALicenseUI } from "./license-client.mjs";
 import { licenseHub } from "./license-hub.mjs";
+import { progressionAccess, advanceClass, openPlutoniumProgression, renderAdvancement } from "./aaa-advancement.mjs";
+import { mountSheetMotion, motionSnapshot } from "./velvet-motion.mjs";
+import { bindItemInspector } from "./velvet-item-inspector.mjs";
+import { mountSheetAppearance } from "./velvet-appearance.mjs";
 
 const MODULE_ID = "dnd-velvet-sheets";
 
@@ -291,8 +295,8 @@ class AAACharacterSheet extends ActorSheet {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["dnd5e", "sheet", "actor", "aaa-sheet"],
       template: "modules/dnd-velvet-sheets/templates/aaa-character-sheet.hbs",
-      width: 900,
-      height: 720,
+      width: 1080,
+      height: 780,
       resizable: true,
       tabs: [],
       dragDrop: [{ dragSelector: "[data-item-id]", dropSelector: null }],
@@ -371,6 +375,7 @@ class AAACharacterSheet extends ActorSheet {
 
     // Level / Class
     context.level = systemData.details?.level ?? 0;
+    context.progression = progressionAccess(actor, this.isEditable);
     context.classLabels = Object.values(actor.classes ?? {})
       .sort((a, b) => b.system.levels - a.system.levels)
       .map(c => `${c.name} ${c.system.levels}`)
@@ -922,7 +927,13 @@ class AAACharacterSheet extends ActorSheet {
 
   /** @override */
   async close(options) {
-    VA.stopAmbientParticles();
+    this._sheetAppearance?.destroy();
+    this._sheetAppearance = null;
+    this._itemInspector?.destroy();
+    this._itemInspector = null;
+    this._sheetMotion?.destroy();
+    this._sheetMotion = null;
+    this._motionSnapshot = null;
     this._aaaEntered = false;
     return super.close(options);
   }
@@ -981,6 +992,9 @@ class AAACharacterSheet extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
+    this._sheetAppearance?.destroy();
+    this._sheetAppearance = mountSheetAppearance(this, html[0], MODULE_ID);
+
     // SOFT GATE: the sheet is never locked. Licensing only drives a periodic
     // reminder (see the ready hook + AAALicenseUI.startReminder). No overlay,
     // no early return — the full sheet always renders.
@@ -992,8 +1006,9 @@ class AAACharacterSheet extends ActorSheet {
       const tabOrder = ["attributes","skills","inventory","spells","features","biography","effects"];
       const dir = tabOrder.indexOf(tab) > tabOrder.indexOf(this._activeTab ?? "") ? 1 : -1;
       // Update nav
-      html.find(".nav-item").removeClass("active");
-      $(ev.currentTarget).addClass("active");
+      html.find(".nav-item").removeClass("active").attr("aria-pressed", "false");
+      $(ev.currentTarget).addClass("active").attr("aria-pressed", "true");
+      html.find(".sheet-section-title").text(ev.currentTarget.querySelector("span")?.textContent ?? "");
       // Update content
       html.find(".aaa-panel > .tab").removeClass("active");
       const newPanel = html.find(`.aaa-panel > .tab[data-tab="${tab}"]`).addClass("active")[0];
@@ -1001,7 +1016,7 @@ class AAACharacterSheet extends ActorSheet {
       this._activeTab = tab;
       VA.navItemClick(ev.currentTarget);
       VA.tabSwitch(newPanel, dir);
-      VA.staggerReveal($(newPanel), ".inv-entry, .feat-entry, .spell-entry, .effect-entry, .action-entry, .feature-entry");
+      VA.staggerReveal($(newPanel), ".inv-slot, .feat-entry, .spell-entry, .effect-entry, .action-entry, .feature-entry");
     });
 
     // Restore last active tab
@@ -1011,6 +1026,13 @@ class AAACharacterSheet extends ActorSheet {
       html.find(".aaa-panel > .tab").removeClass("active");
       html.find(`.aaa-panel > .tab[data-tab="${this._activeTab}"]`).addClass("active");
     }
+    html.find(".nav-item").each((_, element) => {
+      const label = element.querySelector("span")?.textContent ?? "";
+      element.setAttribute("aria-label", label);
+      element.setAttribute("title", label);
+      element.setAttribute("aria-pressed", String(element.classList.contains("active")));
+      if (element.classList.contains("active")) html.find(".sheet-section-title").text(label);
+    });
 
     // ── Keyboard accessibility ──
     // Interactive rows/pips are divs and spans; make them tabbable and let
@@ -1094,15 +1116,6 @@ class AAACharacterSheet extends ActorSheet {
       html.find(".hp-fill").addClass("hp-low");
     }
 
-    // Parallax effect
-    html.find(".dnd-sheet")[0]?.addEventListener("mousemove", ev => {
-      const rect = ev.currentTarget.getBoundingClientRect();
-      const x = ((ev.clientX - rect.left) / rect.width - 0.5) * 10;
-      const y = ((ev.clientY - rect.top) / rect.height - 0.5) * 10;
-      const bg = ev.currentTarget.querySelector(".bg");
-      if (bg) bg.style.transform = `translate(${x}px, ${y}px) scale(1.05)`;
-    });
-
     // Background media — render image or video based on file extension
     const bgDiv = html.find(".bg")[0];
     if (bgDiv) {
@@ -1133,6 +1146,18 @@ class AAACharacterSheet extends ActorSheet {
     if (sheet) {
       sheet.style.setProperty("--aaa-panel-opacity", panelOpacity);
     }
+
+    // Presentation also belongs to read-only sheets. Each render replaces its previous controller.
+    this._itemInspector?.destroy();
+    this._itemInspector = bindItemInspector(this, html[0], "AAA.Inspector");
+    this._sheetMotion?.destroy();
+    const snapshot = motionSnapshot(hp, this.actor.system.details?.level);
+    this._sheetMotion = mountSheetMotion(html[0], {
+      snapshot, previous: this._motionSnapshot, enter: !this._aaaEntered,
+      labels: Object.fromEntries(["healthy", "wounded", "critical", "zero"].map(key => [key, game.i18n.localize(`AAA.Motion.Health.${key}`)]))
+    });
+    this._motionSnapshot = snapshot;
+    this._aaaEntered = true;
 
     // Everything below here only for owners
     if (!this.isEditable) return;
@@ -1407,13 +1432,42 @@ class AAACharacterSheet extends ActorSheet {
       if (item) item.sheet.render(true);
     });
 
-    // Class level up
-    html.find(".class-level-up").click(ev => {
-      const itemId = ev.currentTarget.closest("[data-item-id]")?.dataset.itemId;
-      const item = this.actor.items.get(itemId);
-      if (item && item.type === "class") {
-        VA.levelUpBurst(html);
-        item.update({ "system.levels": item.system.levels + 1 });
+    // Keep progression inside the native workflows, including cancellation and all choices.
+    html.find(".class-level-up, .character-level-up, .plutonium-import").click(async ev => {
+      ev.preventDefault();
+      const button = ev.currentTarget;
+      if (this._progressionBusy || !this.isEditable) return;
+      this._progressionBusy = true;
+      button.disabled = true;
+      try {
+        if (button.matches(".plutonium-import")) {
+          await openPlutoniumProgression(this.actor, this.isEditable);
+        } else {
+          const itemId = button.closest("[data-item-id]")?.dataset.itemId;
+          if (itemId) await advanceClass(this.actor, itemId, this.isEditable);
+          else {
+            const classes = this.actor.items.filter(item => item.type === "class");
+            if (classes.length === 1) await advanceClass(this.actor, classes[0].id, this.isEditable);
+            else {
+              // Class choices use item IDs, so duplicate names and multiclass characters work.
+              new Dialog({
+                title: game.i18n.localize("AAA.Progression.ChooseClass"),
+                content: `<p>${game.i18n.localize(classes.length ? "AAA.Progression.ChooseClassHint" : "AAA.Progression.NoClass")}</p>`,
+                buttons: Object.fromEntries(classes.map(item => [item.id, {
+                  icon: '<i class="fas fa-arrow-up"></i>',
+                  label: Handlebars.escapeExpression(`${item.name} · ${item.system.levels} → ${item.system.levels + 1}`),
+                  callback: () => advanceClass(this.actor, item.id, this.isEditable).catch(error => ui.notifications.error(error.message))
+                }]))
+              }).render(true);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("AAA Sheet | Progression failed", error);
+        ui.notifications.error(error.message);
+      } finally {
+        this._progressionBusy = false;
+        button.disabled = false;
       }
     });
 
@@ -1495,7 +1549,7 @@ class AAACharacterSheet extends ActorSheet {
     html.find(".save-prof").click(ev => {
       ev.stopPropagation();
       if (!this.isEditable) return;
-      const ability = ev.currentTarget.closest(".save-row")?.dataset.ability;
+      const ability = ev.currentTarget.closest(".ability-save, .save-row")?.dataset.ability;
       if (ability) {
         const current = this.actor.system.abilities[ability]?.proficient ?? 0;
         this.actor.update({ [`system.abilities.${ability}.proficient`]: current ? 0 : 1 });
@@ -1596,13 +1650,6 @@ class AAACharacterSheet extends ActorSheet {
       }
     });
 
-    // Sheet entrance animation — once per open, particles on every re-render
-    if (!this._aaaEntered) {
-      VA.sheetEnter(html);
-      this._aaaEntered = true;
-    } else {
-      VA._startAmbientParticles(html);
-    }
   }
 
   /**
@@ -1691,7 +1738,35 @@ class AAACharacterSheet extends ActorSheet {
   }
 
   async _onDropItemCreate(itemData, event) {
+    if (!this.isEditable || !this.actor.isOwner) return false;
     itemData = itemData instanceof Array ? itemData : [itemData];
+    const Manager = game.dnd5e?.applications?.advancement?.AdvancementManager;
+    const advancementsEnabled = !game.settings.get("dnd5e", "disableAdvancements");
+    // Dropped classes, backgrounds and species must keep their native advancement choices.
+    if (itemData.length === 1) {
+      const data = itemData[0];
+      if (data.type === "class") {
+        const remaining = (CONFIG.DND5E.maxLevel ?? 20) - (this.actor.system.details.level ?? 0);
+        if (remaining <= 0) return ui.notifications.warn(game.i18n.localize("AAA.Progression.MaxLevel"));
+        data.system.levels = Math.min(data.system.levels || 1, remaining);
+        const existing = this.actor.items.find(item => item.type === "class" && data.system.identifier && item.system.identifier === data.system.identifier);
+        if (existing) {
+          if (advancementsEnabled) {
+            if (!Manager?.forLevelChange) return ui.notifications.error(game.i18n.localize("AAA.Progression.Unavailable"));
+            const manager = Manager.forLevelChange(this.actor, existing.id, data.system.levels);
+            if (manager.steps.length) return renderAdvancement(manager);
+          }
+          return existing.update({ "system.levels": existing.system.levels + data.system.levels });
+        }
+      }
+      if (data.system?.advancement?.length && advancementsEnabled) {
+        if (!Manager?.forNewItem) return ui.notifications.error(game.i18n.localize("AAA.Progression.Unavailable"));
+        const singleton = CONFIG.Item?.dataModels?.[data.type]?.metadata?.singleton;
+        if (singleton && this.actor.items.some(item => item.type === data.type)) return ui.notifications.warn(game.i18n.localize("AAA.Progression.Singleton"));
+        const manager = Manager.forNewItem(this.actor, data);
+        if (manager.steps.length) return renderAdvancement(manager);
+      }
+    }
     return this.actor.createEmbeddedDocuments("Item", itemData);
   }
 }

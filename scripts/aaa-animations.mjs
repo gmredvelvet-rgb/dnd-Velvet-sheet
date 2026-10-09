@@ -58,8 +58,7 @@ const VA = {
       .to(sheet.querySelectorAll(".hp-fill, .sp-fill"), {
           scaleX: 1, transformOrigin: "left center",
           duration: 0.55, stagger: 0.08, ease: "power2.out"
-        }, "-=0.15")
-      .add(() => this._startAmbientParticles(html), "-=0.2");
+        }, "-=0.15");
   },
 
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -74,9 +73,10 @@ const VA = {
   tabSwitch(panelEl, dir = 1) {
     const g = this.gsap;
     if (!g || !panelEl) return;
+    g.killTweensOf(panelEl);
     g.fromTo(panelEl,
       { opacity: 0, x: dir * 16 },
-      { opacity: 1, x: 0, duration: 0.22, ease: "power2.out" }
+      { opacity: 1, x: 0, duration: 0.24, ease: "power2.out", clearProps: "transform,opacity", overwrite: "auto" }
     );
   },
 
@@ -92,8 +92,8 @@ const VA = {
     const g = this.gsap;
     if (!g || !btn) return;
     g.timeline()
-      .to(btn, { scale: 0.80, duration: 0.07, ease: "power2.in" })
-      .to(btn, { scale: 1.10, duration: 0.13, ease: "back.out(3.5)" })
+      .to(btn, { scale: 0.94, duration: 0.07, ease: "power2.in" })
+      .to(btn, { scale: 1.025, duration: 0.13, ease: "back.out(1.4)" })
       .to(btn, { scale: 1.00, duration: 0.10, ease: "power2.inOut" });
 
     g.to(btn, {
@@ -152,13 +152,13 @@ const VA = {
     // Flash the bar
     g.to(fill, {
       filter: isDamage
-        ? "brightness(2.2) saturate(0.3)"
-        : "brightness(1.6) saturate(1.6)",
+        ? "brightness(1.35) saturate(0.9)"
+        : "brightness(1.2) saturate(1.1)",
       duration: 0.12, yoyo: true, repeat: 1
     });
 
     // Shake sheet on damage
-    if (isDamage) this._damageShake(html[0]);
+    if (isDamage) this._damageShake(html[0].querySelector(".portrait-wrap"));
 
     // Floating number
     this._floatNumber(html, delta);
@@ -220,7 +220,7 @@ const VA = {
     if (!g || !navItem) return;
     g.fromTo(navItem,
       { x: -7 },
-      { x: 0, duration: 0.35, ease: "elastic.out(1, 0.45)" }
+      { x: 0, duration: 0.24, ease: "power2.out", clearProps: "transform", overwrite: "auto" }
     );
   },
 
@@ -236,11 +236,11 @@ const VA = {
   staggerReveal(html, selector) {
     const g = this.gsap;
     if (!g) return;
-    const els = html[0].querySelectorAll(selector);
+    const els = Array.from(html[0].querySelectorAll(selector)).filter(el => el.getClientRects().length).slice(0, 24);
     if (!els.length) return;
     g.fromTo(els,
       { opacity: 0, x: 8 },
-      { opacity: 1, x: 0, stagger: 0.025, duration: 0.22, ease: "power2.out" }
+      { opacity: 1, x: 0, stagger: 0.012, duration: 0.24, ease: "power2.out", clearProps: "transform,opacity", overwrite: "auto" }
     );
   },
 
@@ -273,10 +273,8 @@ const VA = {
     const g = this.gsap;
     if (!g) return;
     const sheet = html[0];
-    g.to(sheet, {
-      filter: "brightness(1.5) sepia(0.6) saturate(3)",
-      duration: 0.15, yoyo: true, repeat: 3, ease: "power1.inOut"
-    });
+    const tracker = sheet.querySelector(".dying-tracker, .hp-bar");
+    if (tracker) g.fromTo(tracker, { opacity: 0.65 }, { opacity: 1, duration: 0.35, yoyo: true, repeat: 1, clearProps: "opacity", overwrite: "auto" });
   },
 
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -287,10 +285,10 @@ const VA = {
     const g = this.gsap;
     if (!g || !sheetEl) return;
     g.timeline()
-      .to(sheetEl, { x: -6, duration: 0.04 })
-      .to(sheetEl, { x:  5, duration: 0.04 })
-      .to(sheetEl, { x: -4, duration: 0.04 })
-      .to(sheetEl, { x:  2, duration: 0.04 })
+      .to(sheetEl, { x: -2, duration: 0.06 })
+      .to(sheetEl, { x:  2, duration: 0.06 })
+      .to(sheetEl, { x: -1, duration: 0.06 })
+      .to(sheetEl, { x:  1, duration: 0.06 })
       .to(sheetEl, { x:  0, duration: 0.06, ease: "power2.out" });
   },
 
@@ -312,70 +310,6 @@ const VA = {
     g.timeline({ onComplete: () => el.remove() })
       .to(el, { scale: 1.4, duration: 0.12, ease: "back.out(2)" })
       .to(el, { y: -20, opacity: 0, scale: 1, duration: 1.2, ease: "power1.out" }, "+=0.2");
-  },
-
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  // INTERNAL: AMBIENT EMBER PARTICLES
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
-  _ambientInterval: null,
-
-  _startAmbientParticles(html) {
-    const g = this.gsap;
-    if (!g) return;
-    const container = html[0].querySelector(".center");
-    if (!container) return;
-    container.style.position = "relative";
-    container.style.overflow = "hidden";
-
-    if (this._ambientInterval) clearInterval(this._ambientInterval);
-
-    const spawn = () => {
-      if (!container.isConnected) { clearInterval(this._ambientInterval); return; }
-      // Don't spawn while the tab is hidden (rAF pauses, embers would pile up)
-      if (document.hidden) return;
-      // Hard cap on live particles — keeps long sessions cheap
-      if (container.querySelectorAll(".aaa-ember").length >= 14) return;
-      const p = document.createElement("div");
-      p.className = "aaa-ember";
-      const size   = 2 + Math.random() * 3;
-      const startX = Math.random() * 100;
-      const driftX = (Math.random() - 0.5) * 50;
-      const dur    = 3.5 + Math.random() * 3;
-      g.set(p, {
-        position: "absolute",
-        bottom: "5%",
-        left: startX + "%",
-        width: size + "px",
-        height: size + "px",
-        borderRadius: "50%",
-        background: `radial-gradient(circle, rgba(220,180,80,0.9) 0%, rgba(180,80,20,0.4) 60%, transparent 100%)`,
-        pointerEvents: "none",
-        opacity: 0,
-        zIndex: 9
-      });
-      container.appendChild(p);
-      g.timeline({ onComplete: () => p.remove() })
-        .to(p, { opacity: 0.55 + Math.random() * 0.35, duration: dur * 0.25, ease: "power1.in" })
-        .to(p, {
-            y: -(160 + Math.random() * 100),
-            x: driftX,
-            opacity: 0,
-            scale: 0.3,
-            duration: dur * 0.75,
-            ease: "power1.out"
-          });
-    };
-
-    spawn();
-    this._ambientInterval = setInterval(spawn, 900 + Math.random() * 400);
-  },
-
-  stopAmbientParticles() {
-    if (this._ambientInterval) {
-      clearInterval(this._ambientInterval);
-      this._ambientInterval = null;
-    }
   },
 
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

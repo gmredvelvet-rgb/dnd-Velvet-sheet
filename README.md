@@ -40,6 +40,23 @@ The sheet is registered alongside the system's own — it never replaces it by d
 
 ## Features
 
+- **Character progression:** “Level up” uses D&D's native advancement manager, including multiclass selection. Per-class arrows use the same manager. Cancelling the assistant does not write a level in advance.
+- **Plutonium:** a dedicated button opens its public Classes & Subclasses importer for the current actor. Select sources, class/subclass and target levels there. Requires an active Plutonium module and its configured minimum import role. This is the importer workflow; Plutonium's original sheet Level Up manager is not publicly exported in 2.19.5.v14.
+- **Premium presentation:** obsidian, aged gold and blue light, engraved metal panels, original vector crests and an astral portrait frame. Combat cards, inset vitality/experience bars, inventory rarity frames and the Info popup share one finish. Portraits remain contained and keyboard focus stays visible.
+- **Saving throws:** each ability has its saving-throw modifier and roll button directly below it. The proficiency diamond remains a separate editable control. These pairs stay together when the grid wraps to three columns; Vitality and subsequent sections follow the complete grid.
+- **Info:** always-visible description buttons on features, spells, items and class entries. Adapted from Velvet's TaleSpire sheet, the popup enriches full descriptions with native rule links/rolls, respects observer access and unidentified descriptions, restores focus on close, and offers an explicit full-sheet button. Reading Info never uses or casts the item.
+- **Dynamic motion:** staggered entrances, a slow portrait halo/orbit, seven fixed light motes, pointer lighting and restrained control feedback. HP changes produce distinct damage/healing lights; confirmed level increases produce a gold cue. A localized vitality indicator distinguishes stable, wounded, critical and zero HP.
+- Each window owns and cleans up its motion. Effects pause off-screen or in hidden tabs, respect live reduced-motion changes, and also work on read-only sheets. Fast tab navigation caps row animation at 24 visible rows and clears temporary transforms after transitions.
+- Dropped classes, species and backgrounds with advancement now open their system choices; repeat class drops increase the existing class through the advancement manager.
+
+After installing these changes, restart Foundry and refresh connected clients so the added stylesheet loads. Existing characters require no migration. Validation: `node --test tests/*.test.mjs`. Browser fixtures cover 560, 640, 820 and 1080 pixel window widths; a live campaign check is still needed for the complete Plutonium source-selection/import flow.
+
+Motion validation additionally covers concurrent sheets, repeated renders, cleanup, rapid tab switches, live reduced-motion changes, visibility pause/resume and HP/level feedback in Chromium fixtures. These are browser checks with sample characters, not a live Foundry campaign test.
+
+Info validation covers description rendering, private/unidentified text, keyboard opening/closing, global link/roll handlers, permission changes, delayed responses, repeated renders and narrow windows. These browser checks use sample items; verify descriptions from your campaign in Foundry after refreshing clients.
+
+The enhanced finish uses three local SVG assets (crest, astral engraving and static grain), with no additional libraries or animation timers. Layout checks cover all tabs at 560/640/820/1080/1440 pixel widths, short windows, long character names and reduced motion. The sidebar scrolls when necessary to keep its final action reachable.
+
 - **A character sheet that looks like a game**, not a form: animated UI driven by GSAP and Anime.js, with a parallax portrait and a cohesive dark aesthetic.
 - **Full tab set** — Attributes, Skills, Features, Inventory, Spells, Effects and Biography.
 - **Per-actor sound configuration**, so a character can carry its own audio.
@@ -79,3 +96,10 @@ Confirm the module is enabled in *Manage Modules*, that the folder is named `dnd
 ## Author
 
 **GM RedVelvet** · [Patreon](https://www.patreon.com/gmredvelvet) · Discord: `gmredvelvet`
+
+
+Personal appearance: the palette button in the sheet header opens a live HSV/RGB/HEX picker for background and accent colors, eight local font choices for titles and body text, four ornament styles, and automatic or manual class emblems. Preferences are stored in the current User flags per character; Actor data and other users' preferences are unaffected. Cancel/Escape discards the preview; Reset is a preview until saved. The emblem follows the highest-level D&D class or the PF2e class slug. Paladin/Champion and Artificer/Inventor share insignia. The collection contains 31 original class SVGs and the default crystal, including the 29 PF2e classes represented by this installation.
+
+Portrait class backdrops: 31 original SVG line-art scenes follow the main class independently of the emblem. The personal Appearance panel can override the backdrop or remove it; previous preferences automatically use the class scene. Examples include a tree and woodland animals for Druid, a grimoire and sky chart for Wizard, a robed goddess of the oath for Paladin/Champion, a roaring wolf and axes for Barbarian, and a blade with shield for Fighter. Colors follow the selected accent, while Royal/Runic frames and the Minimal option retain their behavior.
+
+Interface language policy: all module-owned interface text is English, including navigation, appearance, class art labels, tooltips, Info dialogs and progression messages. Both supported language catalogs intentionally contain the same English text so the module remains English when Foundry uses Spanish.
