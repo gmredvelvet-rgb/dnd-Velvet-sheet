@@ -16,8 +16,8 @@
 |---|---|
 | Foundry VTT | **v12** minimum, **v13** verified. |
 | Game system | **D&D 5e** (`dnd5e`). |
-| Subscription | An **active, qualifying Patreon** subscription to [GM RedVelvet](https://www.patreon.com/gmredvelvet), for as long as you use the module — see [Licensing](#licensing). Only the **GM** authorises; players never see a prompt. |
-| Internet | Required while playing. The licence is verified periodically against a licence server. |
+| Subscription | Optional [GM RedVelvet Patreon](https://www.patreon.com/gmredvelvet) support. The soft gate keeps all functions available; see [Licensing](#licensing-and-soft-gate). |
+| Internet | Needed for Patreon authentication and renewal. Connection failures never lock the sheet. |
 
 One subscription unlocks all the modules:
 
@@ -62,36 +62,25 @@ The enhanced finish uses three local SVG assets (crest, astral engraving and sta
 - **Per-actor sound configuration**, so a character can carry its own audio.
 - **Built on the system's own data.** Nothing is stored in a private format and nothing is migrated. Your actors remain ordinary D&D 5e actors, readable by every other module and by the system's default sheet.
 
-## Licensing
+## Licensing and soft gate
 
-AAA D&D Character Sheet requires an active, qualifying **Patreon** subscription to [GM RedVelvet](https://www.patreon.com/gmredvelvet).
+Support development through an active, qualifying [GM RedVelvet Patreon](https://www.patreon.com/gmredvelvet) subscription. This module uses a **soft gate**: all sheet features remain available without a subscription. An expired subscription or temporary authentication failure never locks a character or stops play.
 
-**Only the GM authorises.** On their first load the GM is prompted to connect their Patreon account, which unlocks the module for everyone in the world. Players never see a prompt and never need an account of their own. If popups are blocked — common on phones — use the **auth-code** flow instead: connect on any device, copy the code, and paste it in.
-
-### What happens if the subscription lapses
-
-**Please read this before subscribing.** This is a subscription, not a one-off purchase, and the module re-checks it periodically against a licence server. Plainly:
-
-- **If the subscription lapses, the sheet locks.** It is covered by an activation panel and cannot be used until the subscription is active again.
-- **Your characters are not locked.** The sheet is registered alongside the system's default one, never in place of it, so you can switch any actor back through *Sheet Configuration* and keep playing immediately.
-- **Nothing is altered or lost.** Foundry, your world, your actors, your items and your settings are untouched — your characters remain ordinary D&D 5e actors, readable by every other module. No data is withheld and no content becomes unopenable. Resubscribing turns the sheet straight back on.
-- **An internet connection is required while playing.** Verification is periodic, so a client that cannot reach the licence server locks the sheet until it can. Fully offline or air-gapped games are not supported.
-
-If a perpetual licence is what you need, this is not that today. I would rather say so here than have anyone find out mid-campaign.
+**Velvet License Hub** handles one Patreon connection for compatible modules. Only the GM connects; players do not need Patreon accounts. Unlicensed worlds receive the Hub's trial reminder. If the Hub is unavailable, the sheet's existing fallback shows a dismissible, auto-hiding reminder to the GM.
 
 ## FAQ
 
-**Do my players need their own subscription?**
-No. Only the GM authorises, and that unlocks the world for everyone connected.
+**Do players need their own subscription?**
+No. Only the GM connects Patreon through the Hub.
 
-**If I stop subscribing, do I lose my characters?**
-No. Your actors are ordinary D&D 5e actors and are never modified. Only the sheet locks — switch back to the default sheet in *Sheet Configuration* and everything is there.
+**What happens when a subscription expires?**
+The trial reminder can return. The sheet and your characters remain usable.
 
-**Can I use it offline?**
-No. The licence is verified periodically over the internet, and a client that cannot reach the licence server locks the sheet until it can.
+**Does an internet outage lock the sheet?**
+No. Internet access is needed to connect or refresh Patreon authorization; a failed check never blocks sheet functions.
 
-**The sheet didn't appear in Sheet Configuration.**
-Confirm the module is enabled in *Manage Modules*, that the folder is named `dnd-velvet-sheets`, and that the GM has authorised the licence.
+**The sheet did not appear in Sheet Configuration.**
+Check that the correct game system, this module and Velvet License Hub are installed and enabled, and refresh connected clients.
 
 ## Author
 
@@ -103,3 +92,7 @@ Personal appearance: the palette button in the sheet header opens a live HSV/RGB
 Portrait class backdrops: 31 original SVG line-art scenes follow the main class independently of the emblem. The personal Appearance panel can override the backdrop or remove it; previous preferences automatically use the class scene. Examples include a tree and woodland animals for Druid, a grimoire and sky chart for Wizard, a robed goddess of the oath for Paladin/Champion, a roaring wolf and axes for Barbarian, and a blade with shield for Fighter. Colors follow the selected accent, while Royal/Runic frames and the Minimal option retain their behavior.
 
 Interface language policy: all module-owned interface text is English, including navigation, appearance, class art labels, tooltips, Info dialogs and progression messages. Both supported language catalogs intentionally contain the same English text so the module remains English when Foundry uses Spanish.
+
+Biography editing uses Foundry's native rich-text editor and document form. Use the editor Save control to save rich text. Appearance is personal to each User and character: the GM does not automatically see a player's chosen colors.
+
+The Prepared spell filter combines with spell level and name search. It includes cantrips, prepared spells and always-available magic; preparation changes use the installed system schema (including D&D 5.1+/6 numeric preparation states).

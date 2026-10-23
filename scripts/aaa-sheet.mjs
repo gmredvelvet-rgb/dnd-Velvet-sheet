@@ -3,6 +3,7 @@
  * Custom RPG-style ActorSheet for D&D 5e characters
  */
 
+import { spellPreparation, preparationUpdate, bindSpellFilters } from "./velvet-spell-filters.mjs";
 import VA from "./aaa-animations.mjs";
 import { AAALicenseClient, AAALicenseUI } from "./license-client.mjs";
 import { licenseHub } from "./license-hub.mjs";
@@ -298,6 +299,8 @@ class AAACharacterSheet extends ActorSheet {
       width: 1080,
       height: 780,
       resizable: true,
+      submitOnChange: true,
+      submitOnClose: true,
       tabs: [],
       dragDrop: [{ dragSelector: "[data-item-id]", dropSelector: null }],
       scrollY: [".aaa-panel .tab"]
@@ -660,7 +663,6 @@ class AAACharacterSheet extends ActorSheet {
           spells: []
         };
       }
-      const prepMode = item.system.preparation?.mode ?? "";
       spellbook[level].spells.push({
         id: item.id,
         name: item.name,
@@ -669,9 +671,7 @@ class AAACharacterSheet extends ActorSheet {
         school: CONFIG.DND5E.spellSchools?.[item.system.school]?.label ?? item.system.school ?? "",
         components: item.system.properties ?? new Set(),
         preparation: item.system.preparation ?? {},
-        prepared: item.system.preparation?.prepared ?? false,
-        alwaysPrepared: ["always", "innate", "atwill", "pact"].includes(prepMode),
-        canPrepare: prepMode === "prepared" && item.system.level > 0,
+        ...spellPreparation(item),
         uses: item.system.uses ?? null,
         hasAction: item.system.activities?.size > 0,
         hasSound: !!item.getFlag(MODULE_ID, "soundTrack")
@@ -927,6 +927,8 @@ class AAACharacterSheet extends ActorSheet {
 
   /** @override */
   async close(options) {
+    this._spellFilters?.destroy();
+    this._spellFilters = null;
     this._sheetAppearance?.destroy();
     this._sheetAppearance = null;
     this._itemInspector?.destroy();
@@ -999,6 +1001,9 @@ class AAACharacterSheet extends ActorSheet {
     // reminder (see the ready hook + AAALicenseUI.startReminder). No overlay,
     // no early return — the full sheet always renders.
 
+    this._spellFilters?.destroy();
+    this._spellFilters = bindSpellFilters(this, html[0]);
+
     // Manual tab navigation
     html.find(".nav-item").click(ev => {
       const tab = ev.currentTarget.dataset.tab;
@@ -1061,6 +1066,7 @@ class AAACharacterSheet extends ActorSheet {
     const applySearch = (scope, rawQuery) => {
       const q = (rawQuery ?? "").trim().toLowerCase();
       this._searchQueries[scope] = q;
+      if (scope === "spells") { this._spellFilters.apply(q); return; }
       const tab = html.find(`.aaa-panel > .tab[data-tab="${scope}"]`);
       const rowSelector = {
         inventory: ".inv-slot",
@@ -1485,30 +1491,9 @@ class AAACharacterSheet extends ActorSheet {
       ev.stopPropagation();
       const itemId = ev.currentTarget.closest("[data-item-id]")?.dataset.itemId;
       const item = this.actor.items.get(itemId);
-      if (item) item.update({ "system.preparation.prepared": !item.system.preparation?.prepared });
+      const update = item && preparationUpdate(item);
+      if (update) void item.update(update);
     });
-
-    // Spell filter
-    html.find(".spell-filter").click(ev => {
-      const filter = ev.currentTarget.dataset.filter;
-      html.find(".spell-filter").removeClass("active");
-      $(ev.currentTarget).addClass("active");
-      if (filter === "all") {
-        html.find(".spell-level-group").show();
-      } else {
-        html.find(".spell-level-group").hide();
-        html.find(`.spell-level-group[data-level="${filter}"]`).show();
-      }
-      this._activeSpellFilter = filter;
-    });
-
-    // Restore spell filter
-    if (this._activeSpellFilter && this._activeSpellFilter !== "all") {
-      html.find(".spell-filter").removeClass("active");
-      html.find(`.spell-filter[data-filter="${this._activeSpellFilter}"]`).addClass("active");
-      html.find(".spell-level-group").hide();
-      html.find(`.spell-level-group[data-level="${this._activeSpellFilter}"]`).show();
-    }
 
     // Feature filter
     html.find(".feat-filter").click(ev => {

@@ -1,19 +1,15 @@
-## D&D Velvet Sheet v1.5.0
+## D&D Velvet Sheet v1.5.1
 
-- Refined RPG presentation with responsive layouts, engraved panels, portrait lighting, animation and damage/healing feedback. Effects respect reduced motion and pause when sheets are hidden.
-- Added personal appearance settings: RGB/HSV/HEX background and accent colors, eight font choices, four ornament styles, and automatic or manual class emblems and portrait backdrops.
-- Added 31 original class emblems plus a default insignia, and 31 class-specific portrait illustrations. Paladin/Champion and Artificer/Inventor share artwork.
-- Added visible **Info** buttons to inspect complete item and ability descriptions with native rule links and rolls, keyboard support and access controls.
-- Improved appearance dropdown contrast in both Foundry light and dark themes.
-- All module-owned interface text is in English. Appearance preferences are saved per character and user; character data needs no migration.
-- Added **Level up** using D&D's native advancement manager, including multiclass selection and advancement-aware class/species/background drops.
-- Added a **Plutonium** button using its public Classes & Subclasses importer for the current character.
-- Positioned each saving throw below its matching ability and fixed overlapping modifier labels.
+- Restored document form persistence and native rich-text biography editing.
+- Improved Info cards with complete item/spell metadata, keyboard-accessible image inspection and a native Cast/Use action when permitted.
+- Clarified personal colors: appearance is saved separately for each user and character.
+- Updated licensing documentation to match the existing soft gate. Authentication failures or expired subscriptions never block sheet functions.
+- Added a **Prepared** spell filter that combines with level and name search, preserves cantrips/always-available spells, and supports modern D&D numeric preparation states.
 
-### Installation
+### Update
 
-Update the module in Foundry, restart Foundry, and refresh connected clients. Existing characters need no migration. Velvet License Hub 2.0.0 or newer remains required.
+Update the module in Foundry, restart Foundry, and refresh connected clients. No character migration is needed. Use the rich-text editor Save control to save biography text.
 
 ### Validation
 
-37 automated tests passed for advancement, item descriptions, shared appearance assets, motion and drop handling. Browser fixtures covered responsive layouts, personal appearance, class artwork, keyboard interactions and dropdown contrast. Full live campaign interactions, including Plutonium source selection/import, still require a campaign check.
+Automated tests and browser fixtures cover descriptions, permissions, keyboard interactions, persistence targets and combined spell filters. Existing advancement, motion and appearance tests passed. Full live campaign validation remains pending.

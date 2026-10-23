@@ -1,4 +1,4 @@
-﻿<div class="dnd-sheet">
+<form class="dnd-sheet" autocomplete="off">
   <div class="bg" data-bg="{{bgImage}}"></div>
 
   <div class="layout">
@@ -42,10 +42,10 @@
       </nav>
 
       <div class="quick-actions">
-        <button class="rest-short" title="Short Rest"><i class="fas fa-campground"></i></button>
-        <button class="rest-long" title="Long Rest"><i class="fas fa-bed"></i></button>
-        <button class="initiative-roll" title="Roll Initiative"><i class="fas fa-fist-raised"></i></button>
-        <button class="bg-picker" title="Change Background"><i class="fas fa-image"></i></button>
+        <button type="button" class="rest-short" title="Short Rest"><i class="fas fa-campground"></i></button>
+        <button type="button" class="rest-long" title="Long Rest"><i class="fas fa-bed"></i></button>
+        <button type="button" class="initiative-roll" title="Roll Initiative"><i class="fas fa-fist-raised"></i></button>
+        <button type="button" class="bg-picker" title="Change Background"><i class="fas fa-image"></i></button>
       </div>
     </div>
 
@@ -92,8 +92,8 @@
                    the doll is closed, so the toggle can never get covered
                    by the equipment slots (see PAPER DOLL FIX in the CSS). -->
               <div class="pd-actions">
-                <button class="pd-btn paperdoll-toggle" title="Toggle Paper Doll"><i class="fas fa-tshirt"></i></button>
-                <button class="pd-btn pd-unequip-all" title="Unequip All"><i class="fas fa-times-circle"></i></button>
+                <button type="button" class="pd-btn paperdoll-toggle" title="Toggle Paper Doll"><i class="fas fa-tshirt"></i></button>
+                <button type="button" class="pd-btn pd-unequip-all" title="Unequip All"><i class="fas fa-times-circle"></i></button>
               </div>
             </div>
             <div class="pd-col pd-right">
@@ -424,13 +424,13 @@
 
         <!-- Category Filter -->
         <div class="inv-filter-bar">
-          <button class="inv-filter active" data-filter="all"><i class="fas fa-th"></i> All</button>
-          <button class="inv-filter" data-filter="weapons"><i class="fas fa-sword"></i> Weapons</button>
-          <button class="inv-filter" data-filter="equipment"><i class="fas fa-shield-alt"></i> Armor</button>
-          <button class="inv-filter" data-filter="consumables"><i class="fas fa-flask"></i> Consum.</button>
-          <button class="inv-filter" data-filter="tools"><i class="fas fa-wrench"></i> Tools</button>
-          <button class="inv-filter" data-filter="containers"><i class="fas fa-box"></i> Containers</button>
-          <button class="inv-filter" data-filter="loot"><i class="fas fa-coins"></i> Loot</button>
+          <button type="button" class="inv-filter active" data-filter="all"><i class="fas fa-th"></i> All</button>
+          <button type="button" class="inv-filter" data-filter="weapons"><i class="fas fa-sword"></i> Weapons</button>
+          <button type="button" class="inv-filter" data-filter="equipment"><i class="fas fa-shield-alt"></i> Armor</button>
+          <button type="button" class="inv-filter" data-filter="consumables"><i class="fas fa-flask"></i> Consum.</button>
+          <button type="button" class="inv-filter" data-filter="tools"><i class="fas fa-wrench"></i> Tools</button>
+          <button type="button" class="inv-filter" data-filter="containers"><i class="fas fa-box"></i> Containers</button>
+          <button type="button" class="inv-filter" data-filter="loot"><i class="fas fa-coins"></i> Loot</button>
         </div>
 
         <!-- Currency -->
@@ -523,17 +523,18 @@
 
         <!-- Spell Level Filter -->
         <div class="spell-filter-bar">
-          <button class="spell-filter active" data-filter="all">All</button>
-          <button class="spell-filter" data-filter="0">Cantrips</button>
-          <button class="spell-filter" data-filter="1">1st</button>
-          <button class="spell-filter" data-filter="2">2nd</button>
-          <button class="spell-filter" data-filter="3">3rd</button>
-          <button class="spell-filter" data-filter="4">4th</button>
-          <button class="spell-filter" data-filter="5">5th</button>
-          <button class="spell-filter" data-filter="6">6th</button>
-          <button class="spell-filter" data-filter="7">7th</button>
-          <button class="spell-filter" data-filter="8">8th</button>
-          <button class="spell-filter" data-filter="9">9th</button>
+          <button type="button" class="spell-prepared-filter" data-prepared-filter aria-pressed="false" title="Show prepared spells, cantrips and always-available spells">Prepared</button>
+          <button type="button" class="spell-filter active" data-filter="all">All</button>
+          <button type="button" class="spell-filter" data-filter="0">Cantrips</button>
+          <button type="button" class="spell-filter" data-filter="1">1st</button>
+          <button type="button" class="spell-filter" data-filter="2">2nd</button>
+          <button type="button" class="spell-filter" data-filter="3">3rd</button>
+          <button type="button" class="spell-filter" data-filter="4">4th</button>
+          <button type="button" class="spell-filter" data-filter="5">5th</button>
+          <button type="button" class="spell-filter" data-filter="6">6th</button>
+          <button type="button" class="spell-filter" data-filter="7">7th</button>
+          <button type="button" class="spell-filter" data-filter="8">8th</button>
+          <button type="button" class="spell-filter" data-filter="9">9th</button>
         </div>
 
         {{#if spellSlots.length}}
@@ -599,11 +600,11 @@
 
         <!-- Feature Filter -->
         <div class="feat-filter-bar">
-          <button class="feat-filter active" data-filter="all"><i class="fas fa-th"></i> All</button>
-          <button class="feat-filter" data-filter="active"><i class="fas fa-bolt"></i> Active</button>
-          <button class="feat-filter" data-filter="passive"><i class="fas fa-eye"></i> Passive</button>
-          <button class="feat-filter" data-filter="classes"><i class="fas fa-chess-rook"></i> Class</button>
-          <button class="feat-filter" data-filter="feats"><i class="fas fa-star"></i> Feats</button>
+          <button type="button" class="feat-filter active" data-filter="all"><i class="fas fa-th"></i> All</button>
+          <button type="button" class="feat-filter" data-filter="active"><i class="fas fa-bolt"></i> Active</button>
+          <button type="button" class="feat-filter" data-filter="passive"><i class="fas fa-eye"></i> Passive</button>
+          <button type="button" class="feat-filter" data-filter="classes"><i class="fas fa-chess-rook"></i> Class</button>
+          <button type="button" class="feat-filter" data-filter="feats"><i class="fas fa-star"></i> Feats</button>
         </div>
 
         {{#each features}}
@@ -680,7 +681,7 @@
             {{else}} {{system.details.gender}}{{/if}}
           </div>
         </div>
-        <div class="bio-content">{{{biography}}}</div>
+        <div class="bio-content">{{editor biography target="system.details.biography.value" button=true owner=isOwner editable=isEditable engine="prosemirror"}}</div>
       </div>
 
       <!-- EFFECTS TAB -->
@@ -711,4 +712,4 @@
 
     </div>
   </div>
-</div>
+</form>
